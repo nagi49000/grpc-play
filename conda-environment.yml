@@ -1,0 +1,10 @@
+name: grpc-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip=24.3.1
+  - python=3.13.0
+  - pip:
+      - faker==33.0.0
+      - grpcio-tools==1.68.0

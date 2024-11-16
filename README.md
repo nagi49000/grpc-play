@@ -1,9 +1,10 @@
 # grpc-play
-play area for building gRPC services
+A play area for building gRPC services
 
-### autogenerating gprc code
+### autogenerating gRPC code from .proto files
 
-Navigate to `services/grpc-python-server/` and run
+In the root of the repo, run
 ```
-python -m grpc_tools.protoc -I ../protobufs --python_out=. --grpc_python_out=. ../protobufs/ask-random-names.proto
+python -m grpc_tools.protoc -I ./protobufs --python_out=services/grpc-python-server/ --grpc_python_out=services/grpc-python-server/ protobufs/ask-random-names.proto
+python -m grpc_tools.protoc -I ./protobufs --python_out=services/grpc-python-client/ --grpc_python_out=services/grpc-python-client/ protobufs/ask-random-names.proto
 ```
