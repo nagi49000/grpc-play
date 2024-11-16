@@ -8,10 +8,6 @@ from ask_random_names_pb2_grpc import RandomNamesServicer, add_RandomNamesServic
 from ask_random_names_pb2 import RandomNamesResponse, RandomNamesRequest
 
 
-fake = Faker()
-Faker.seed(0)
-
-
 def get_logger(log_name: str) -> logging.Logger:
     logger = logging.getLogger(log_name)
     handler = logging.StreamHandler()
@@ -24,8 +20,9 @@ def get_logger(log_name: str) -> logging.Logger:
 
 class RandNameService(RandomNamesServicer):
 
-    def __init__(self, logger: logging.Logger):
+    def __init__(self, logger: logging.Logger, fake: Faker):
         self._logger = logger
+        self._fake = fake
 
     def Names(
             self,
@@ -33,14 +30,17 @@ class RandNameService(RandomNamesServicer):
             context: grpc._cython.cygrpc._SyncServicerContext
     ) -> RandomNamesResponse:
         self._logger.debug(f"RandNameService.Names received request {request}")
-        fake_names = [fake.name() for _ in range(request.max_results)]
+        fake_names = [self._fake.name() for _ in range(request.max_results)]
         return RandomNamesResponse(names=fake_names)
 
 
-async def serve(port: int = 50051):
+async def serve(port: int = 50051, faker_seed: int | None = None):
     logger = get_logger("grpc-python-server")
+    fake = Faker()
+    Faker.seed(faker_seed)
+
     server = grpc.aio.server()
-    add_RandomNamesServicer_to_server(RandNameService(logger), server)
+    add_RandomNamesServicer_to_server(RandNameService(logger, fake), server)
     server.add_insecure_port(f"0.0.0.0:{port}")
     await server.start()
     logger.info(f"gRPC python server started on port {port}")
