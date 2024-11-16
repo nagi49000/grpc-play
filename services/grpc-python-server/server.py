@@ -24,7 +24,7 @@ class RandNameService(RandomNamesServicer):
         self._logger = logger
         self._fake = fake
 
-    def Names(
+    async def Names(
             self,
             request: RandomNamesRequest,
             context: grpc._cython.cygrpc._SyncServicerContext
