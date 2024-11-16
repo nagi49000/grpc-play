@@ -1,0 +1,19 @@
+services:
+  grpc-python-server:
+    build:
+      context: .
+      dockerfile: ./services/grpc-python-server/Dockerfile
+    ports:
+      - 50051:50051
+    networks:
+      - grpc-network
+
+  grpc-python-client:
+    build:
+      context: .
+      dockerfile: ./services/grpc-python-client/Dockerfile
+    networks:
+      - grpc-network
+
+networks:
+  grpc-network:

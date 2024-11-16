@@ -1,6 +1,7 @@
 import asyncio
 import grpc
 from faker import Faker
+from signal import signal, SIGTERM
 # imports from auto-generated files
 from ask_random_names_pb2_grpc import RandomNamesServicer, add_RandomNamesServicer_to_server
 from ask_random_names_pb2 import RandomNamesResponse
@@ -22,6 +23,12 @@ async def serve():
     server.add_insecure_port("0.0.0.0:50051")
     print("HOLA")
     await server.start()
+
+    def handle_sigterm(*_):
+        all_rpcs_done_event = server.stop(30)
+        all_rpcs_done_event.wait(30)
+
+    signal(SIGTERM, handle_sigterm)
     await server.wait_for_termination()
 
 
