@@ -1,0 +1,15 @@
+syntax = "proto3";
+package random_names;
+
+message RandomNamesRequest {
+    // number of random names to request
+    uint32 max_results = 3;
+}
+
+message RandomNamesResponse {
+    repeated string names = 1;
+}
+
+service RandomNames {
+    rpc Names (RandomNamesRequest) returns (RandomNamesResponse);
+}
