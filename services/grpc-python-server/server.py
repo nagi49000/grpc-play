@@ -8,13 +8,13 @@ from ask_random_names_pb2_grpc import RandomNamesServicer, add_RandomNamesServic
 from ask_random_names_pb2 import RandomNamesResponse, RandomNamesRequest
 
 
-def get_logger(log_name: str) -> logging.Logger:
+def get_logger(log_name: str, log_level: int = logging.INFO) -> logging.Logger:
     logger = logging.getLogger(log_name)
     handler = logging.StreamHandler()
     formatter = logging.Formatter("%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(log_level)
     return logger
 
 
@@ -35,7 +35,7 @@ class RandNameService(RandomNamesServicer):
 
 
 async def serve(port: int = 50051, faker_seed: int | None = None):
-    logger = get_logger("grpc-python-server")
+    logger = get_logger("grpc-python-server", logging.DEBUG)
     fake = Faker()
     Faker.seed(faker_seed)
 
