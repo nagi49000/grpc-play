@@ -1,7 +1,6 @@
 FROM python:3.13.0-slim-bookworm AS base
 
 ARG service_folder=services/grpc-python-client
-ENV SERVICE_FOLDER=${service_folder}
 
 WORKDIR app
 
@@ -14,4 +13,9 @@ RUN pip install --upgrade pip && \
 
 COPY ./${service_folder}/*py ./${service_folder}/
 
+FROM base AS prod
+
+ENV SERVICE_FOLDER=${service_folder}
+ENV GRPC_SERVER_FQDN=grpc-python-server
+ENV GRPC_SERVER_PORT=50051
 CMD exec python ./${SERVICE_FOLDER}/dirty_test.py
