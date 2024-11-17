@@ -1,4 +1,10 @@
 services:
+  grpc-python-server-tester:
+    build:
+      context: .
+      dockerfile: ./services/grpc-python-server/Dockerfile
+      target: tester
+
   grpc-python-server:
     build:
       context: .

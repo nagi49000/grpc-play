@@ -16,6 +16,11 @@ COPY ./${service_folder}/*py ./${service_folder}/
 FROM base AS tester
 
 COPY ./${service_folder}/requirements-test.txt ./${service_folder}/
+COPY ./${service_folder}/test ./${service_folder}/test
+
+RUN cd ${service_folder} && \
+    pip install -r requirements-test.txt && \
+    python -m pytest --cov=./
 
 FROM base AS prod
 
