@@ -13,6 +13,10 @@ RUN pip install --upgrade pip && \
 
 COPY ./${service_folder}/*py ./${service_folder}/
 
+FROM base AS tester
+
+COPY ./${service_folder}/requirements-test.txt ./${service_folder}/
+
 FROM base AS prod
 
 ENV SERVICE_FOLDER=${service_folder}
