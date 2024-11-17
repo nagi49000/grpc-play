@@ -20,9 +20,10 @@ def get_logger(log_name: str, log_level: int = logging.INFO) -> logging.Logger:
 
 class RandNameService(RandomNamesServicer):
 
-    def __init__(self, logger: logging.Logger, fake: Faker):
+    def __init__(self, logger: logging.Logger, faker_seed: int | None = None):
         self._logger = logger
-        self._fake = fake
+        self._fake = Faker()
+        Faker.seed(faker_seed)
 
     async def Names(
             self,
@@ -36,11 +37,8 @@ class RandNameService(RandomNamesServicer):
 
 async def serve(port: int = 50051, faker_seed: int | None = None):
     logger = get_logger("grpc-python-server", logging.DEBUG)
-    fake = Faker()
-    Faker.seed(faker_seed)
-
     server = grpc.aio.server()
-    add_RandomNamesServicer_to_server(RandNameService(logger, fake), server)
+    add_RandomNamesServicer_to_server(RandNameService(logger), server)
     server.add_insecure_port(f"0.0.0.0:{port}")
     await server.start()
     logger.info(f"gRPC python server started on port {port}")
