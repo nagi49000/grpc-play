@@ -10,6 +10,16 @@ message RandomNamesResponse {
     repeated string names = 1;
 }
 
+message RandomCitiesRequest {
+    // number of random names to request
+    uint32 max_results = 3;
+}
+
+message RandomCitiesResponse {
+    repeated string cities = 1;
+}
+
 service RandomNames {
     rpc Names (RandomNamesRequest) returns (RandomNamesResponse);
+    rpc Cities (RandomCitiesRequest) returns (RandomCitiesResponse);
 }

@@ -61,7 +61,13 @@ def test_random_names_names(grpc_server):
     assert isinstance(result, ask_random_names_pb2.RandomNamesResponse)
     assert result.IsInitialized()
     assert MessageToDict(result) == {
-        "names": ["Allison Hill", "Noah Rhodes", "Angie Henderson", "Daniel Wagner", "Cristian Santos"]
+        "names": [
+            "Allison Hill",
+            "Noah Rhodes",
+            "Angie Henderson",
+            "Daniel Wagner",
+            "Cristian Santos"
+        ]
     }
 
     response, code = get_response_and_code(ask_random_names_pb2.RandomNamesRequest(max_results=2))
@@ -74,3 +80,48 @@ def test_random_names_names(grpc_server):
     assert MessageToDict(result) == {
         "names": ["Connie Lawrence", "Abigail Shaffer"]
     }
+
+
+def test_random_names_cities(grpc_server):
+    def get_response_and_code(request):
+        # Define a call to the mock server
+        # This requires saying which method we are calling calling on the service, by supplying the method definition in the .proto. The
+        # protobuf which will have been translated into a _pb2.py file, and the method definition is in the service definition in that file
+        # The request also needs to be supplied; the request definition is agin in a .proto file, and translated into a _pb2.py file
+        # When invoking the method, one can invoke unary_unary, unary_stream, stream_unary, stream_stream. In this case, the request is simple,
+        # with making a single request and getting a single response (like a REST call), so unary_unary is used here
+        rpc = grpc_server.invoke_unary_unary(
+            ask_random_names_pb2.DESCRIPTOR.services_by_name["RandomNames"].methods_by_name["Cities"],
+            (),  # docs say this "The RPC’s invocation metadata". No idea what that means.
+            request,
+            None
+        )
+        initial_metadata = rpc.initial_metadata()
+        response, trailing_metadata, code, details = rpc.termination()
+        return response, code
+
+    response, code = get_response_and_code(ask_random_names_pb2.RandomCitiesRequest(max_results=5))
+    assert code == grpc.StatusCode.OK
+    # the service implementation is async, so the response brings back a coroutine (rather than a function) that will give the result
+    result = asyncio.run(response)
+
+    assert isinstance(result, ask_random_names_pb2.RandomCitiesResponse)
+    assert result.IsInitialized()
+    assert MessageToDict(result) == {
+        "cities": [
+            "North Judithbury",
+            "East Jill",
+            "New Roberttown",
+            "East Jessetown",
+            "Lake Debra"
+        ]
+    }
+
+    response, code = get_response_and_code(ask_random_names_pb2.RandomCitiesRequest(max_results=2))
+    assert code == grpc.StatusCode.OK
+    # the service implementation is async, so the response brings back a coroutine (rather than a function) that will give the result
+    result = asyncio.run(response)
+
+    assert isinstance(result, ask_random_names_pb2.RandomCitiesResponse)
+    assert result.IsInitialized()
+    assert MessageToDict(result) == {"cities": ["Robinsonshire", "Lisatown"]}

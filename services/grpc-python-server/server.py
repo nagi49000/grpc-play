@@ -4,8 +4,16 @@ import logging
 from faker import Faker
 from signal import signal, SIGTERM
 # imports from auto-generated files
-from ask_random_names_pb2_grpc import RandomNamesServicer, add_RandomNamesServicer_to_server
-from ask_random_names_pb2 import RandomNamesResponse, RandomNamesRequest
+from ask_random_names_pb2_grpc import (
+    RandomNamesServicer,
+    add_RandomNamesServicer_to_server,
+)
+from ask_random_names_pb2 import (
+    RandomNamesResponse,
+    RandomNamesRequest,
+    RandomCitiesResponse,
+    RandomCitiesRequest
+)
 
 
 def get_logger(log_name: str, log_level: int = logging.INFO) -> logging.Logger:
@@ -33,6 +41,15 @@ class RandNameService(RandomNamesServicer):
         self._logger.debug(f"RandNameService.Names received request {request}")
         fake_names = [self._fake.name() for _ in range(request.max_results)]
         return RandomNamesResponse(names=fake_names)
+
+    async def Cities(
+            self,
+            request: RandomCitiesRequest,
+            context: grpc._cython.cygrpc._SyncServicerContext
+    ) -> RandomNamesResponse:
+        self._logger.debug(f"RandNameService.Cities received request {request}")
+        fake_cities = [self._fake.city() for _ in range(request.max_results)]
+        return RandomCitiesResponse(cities=fake_cities)
 
 
 async def serve(port: int = 50051, faker_seed: int | None = None):
