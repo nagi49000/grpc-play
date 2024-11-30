@@ -13,3 +13,11 @@ print(client.Names(request))
 
 request = RandomCitiesRequest(max_results=6)
 print(client.Cities(request))
+
+nginx_server = getenv("NGINX_GRPC_GATEWAY_FQDN", None)
+nginx_port = getenv("NGINX_GRPC_GATEWAY_PORT", None)
+if nginx_server and nginx_port:
+    channel = grpc.insecure_channel(f"{nginx_server}:{nginx_port}")
+    client = RandomNamesStub(channel)
+    request = RandomNamesRequest(max_results=2)
+    print(client.Names(request))

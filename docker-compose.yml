@@ -18,6 +18,9 @@ services:
     build:
       context: .
       dockerfile: ./services/grpc-python-client/Dockerfile
+    environment:
+      - NGINX_GRPC_GATEWAY_FQDN=grpc-nginx
+      - NGINX_GRPC_GATEWAY_PORT=8080
     networks:
       - grpc-network
 
